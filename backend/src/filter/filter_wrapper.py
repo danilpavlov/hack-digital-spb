@@ -11,7 +11,11 @@ class FilterWrapper:
             lambda x: ' '.join(x.split(' ')[1:])  # Убираем дату из названия направления
         )
 
+    def get_profs(self):
+        return json.loads(self.profs['Профессия'].to_json(orient='index', force_ascii=False))
+
     def get_documents(self, abiture_data):
+        abiture_data = json.load(abiture_data)
         exams, wish_prof = self.__parse_data(abiture_data)
 
         filtered_df = self.df.copy()
