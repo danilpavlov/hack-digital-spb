@@ -40,10 +40,8 @@ class FilterWrapper:
         wish_prof = abiture_data['profession']
         return exams, wish_prof
 
-    def __rank(self, df, wish_prof):
-        #print(self.profs)
-        wished_profs = self.profs[self.profs['Профессия'] == wish_prof]
-        #print('Программная инженерия' in wished_profs['Конкурсн. группа'].values)
+    def __rank(self, df, wish_profs):
+        wished_profs = self.profs[self.profs['Профессия'].isin(wish_profs)]
 
         df['wished'] = df['Конкурсн. группа'].apply(
             lambda x: (
