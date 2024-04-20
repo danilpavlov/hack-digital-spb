@@ -39,4 +39,3 @@ def parse_etu():
     )
     profs_df.to_csv('./backend/src/filter/data/prof.csv')
 
-parse_etu()
