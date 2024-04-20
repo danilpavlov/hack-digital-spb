@@ -13,14 +13,16 @@ if not os.path.exists(profs_url):
 
 filter_wrap = FilterWrapper(data_url, profs_url)
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST'])
 def get_documents():
-    if request.method == 'GET' and request.is_json:
+    if request.method == 'POST' and request.is_json:
         abiture_data = request.json
+        abiture_data['scores'] = [int(score) for score in abiture_data.get('scores', [])]
         documents = filter_wrap.get_documents(abiture_data)
         return jsonify(documents)
     else:
         return 'Invalid request', 400
+
 
 if __name__ == '__main__':
     app.run(port=5001)
