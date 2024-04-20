@@ -1,77 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Помощник по выбору направления поступления</title>
+    <title>Подбор специальности</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h1>Пожалуйста, укажите следующие данные:</h1>
-    <form action="/recommendation" method="post">
-        <label for="subject_count">Количество сданных предметов:</label><br>
-        <select id="subject_count" name="subject_count" onchange="showSubjectInputs()">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-        </select><br><br>
-        
-        <div id="subjectInputs">
-            <!-- Поля для выбора предметов и ввода баллов будут отображены здесь -->
-        </div>
-        
-        <label for="desired_profession">Желаемая профессия:</label><br>
-        <input type="text" id="desired_profession" name="desired_profession" required><br><br>
-        
-        <input type="submit" value="Получить рекомендацию">
-    </form>
+    <h1> Введите ваши баллы ЕГЭ</h1>
 
-    <script>
-        function showSubjectInputs() {
-            var subjectCountSelect = document.getElementById("subject_count");
-            var subjectCount = subjectCountSelect.value;
-            var subjectInputsDiv = document.getElementById("subjectInputs");
-            subjectInputsDiv.innerHTML = ""; // Очистка предыдущего содержимого
+    <table>
+        <tr>
+            <th>Предмет</th>
+            <th>Баллы</th>
+        </tr>
+        <tr>
+            <td>Математика</td>
+            <td><input id="math" type="number"></td>
+        </tr>
+        <tr>
+            <td>Физика</td>
+            <td><input id="physics" type="number"></td>
+        </tr>
+        <tr>
+            <td>Русский язык</td>
+            <td><input id="russian" type="number"></td>
+        </tr>
+        <tr>
+            <td>Химия</td>
+            <td><input id="chemistry" type="number"></td>
+        </tr>
+        <tr>
+            <td>Биология</td>
+            <td><input id="biology" type="number"></td>
+        </tr>
+        <tr>
+            <td>Иностранный язык</td>
+            <td><input id="foreign" type="number"></td>
+        </tr>
+        <tr>
+            <td>Информатика</td>
+            <td><input id="computer" type="number"></td>
+        </tr>
+        <tr>
+            <td>География</td>
+            <td><input id="geography" type="number"></td>
+        </tr>
+        <tr>
+            <td>Обществознание</td>
+            <td><input id="social" type="number"></td>
+        </tr>
+    </table>
 
-            var subjects = ["Математика", "Русский язык", "Информатика", "Физика", "Биология", "Химия"];
-
-            for (var i = 1; i <= subjectCount; i++) {
-                var subjectDiv = document.createElement("div");
-                
-                var subjectLabel = document.createElement("label");
-                subjectLabel.textContent = "Предмет " + i + ": ";
-                var subjectSelect = document.createElement("select");
-                subjectSelect.name = "subject" + i;
-                subjectSelect.required = true;
-
-                for (var j = 0; j < subjects.length; j++) {
-                    var option = document.createElement("option");
-                    option.text = subjects[j];
-                    subjectSelect.add(option);
-                }
-
-                var scoreLabel = document.createElement("label");
-                scoreLabel.textContent = "Баллы по предмету " + i + ": ";
-                var scoreInput = document.createElement("input");
-                scoreInput.type = "number";
-                scoreInput.name = "score" + i;
-                scoreInput.required = true;
-                scoreInput.min = "0";
-
-                subjectDiv.appendChild(subjectLabel);
-                subjectDiv.appendChild(subjectSelect);
-                subjectDiv.appendChild(document.createElement("br"));
-                subjectDiv.appendChild(scoreLabel);
-                subjectDiv.appendChild(scoreInput);
-                subjectDiv.appendChild(document.createElement("br"));
-
-                subjectInputsDiv.appendChild(subjectDiv);
-            }
-        }
-
-        // Вызвать функцию при загрузке страницы, чтобы отобразить правильное количество полей для ввода
-        window.onload = showSubjectInputs;
-    </script>
+    
+    <input id="acception" type="button" value="Подобрать варианты">
 </body>
 </html>
