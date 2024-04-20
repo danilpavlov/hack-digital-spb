@@ -12,12 +12,17 @@ class FilterWrapper:
         )
 
     def get_documents(self, abiture_data):
-        exam_scores, full_exam_score, exam_names, wish_prof = self.__parse_data(abiture_data)
-        filtered_df = self.df[
-            (self.df['Мин. балл 1'] <= exam_scores.get(1)) & (self.df['Предмет 1'] == exam_names.get(1)) &
-            (self.df['Мин. балл 2'] <= exam_scores.get(2)) & (self.df['Предмет 2'] == exam_names.get(2)) &
-            (self.df['Мин. балл 3'] <= exam_scores.get(3)) & (self.df['Предмет 3'] == exam_names.get(3))
-        ].copy()
+        exams, wish_prof = self.__parse_data(abiture_data)
+
+        filtered_df = self.df.copy()
+        for subject, score in exams:
+            filtered_df = (
+                filtered_df[
+                    ((filtered_df['Мин. балл 1'] <= score) & (filtered_df['Предмет 1'] == subject)) |
+                    ((filtered_df['Мин. балл 2'] <= score) & (filtered_df['Предмет 2'] == subject)) |
+                    ((filtered_df['Мин. балл 3'] <= score) & (filtered_df['Предмет 3'] == subject))
+                ]
+            )
 
         filtered_df = self.__rank(filtered_df, wish_prof)
 
@@ -26,30 +31,24 @@ class FilterWrapper:
         return json_response
 
     def __parse_data(self, abiture_data):
-        exam_scores = {
-            1: abiture_data['exam_1_score'],
-            2: abiture_data['exam_2_score'],
-            3: abiture_data['exam_3_score'],
-        }
+        exams = [
+            (subject, score) for subject, score in zip(
+                abiture_data['subjects'], abiture_data['scores']
+            )
+        ]
 
-        full_exam_score = sum(exam_scores.values())
-
-        exam_names = {
-            1: abiture_data['exam_1_name'],
-            2: abiture_data['exam_2_name'],
-            3: abiture_data['exam_3_name'],
-        }
-
-        wish_prof = abiture_data['wish_prof']
-        return exam_scores, full_exam_score, exam_names, wish_prof
+        wish_prof = abiture_data['profession']
+        return exams, wish_prof
 
     def __rank(self, df, wish_prof):
+        #print(self.profs)
         wished_profs = self.profs[self.profs['Профессия'] == wish_prof]
+        #print('Программная инженерия' in wished_profs['Конкурсн. группа'].values)
 
         df['wished'] = df['Конкурсн. группа'].apply(
             lambda x: (
                 True
-                if x in wished_profs['Конкурсн. группа'] else
+                if x in wished_profs['Конкурсн. группа'].values else
                 False
             )
         )
