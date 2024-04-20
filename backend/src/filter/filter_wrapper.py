@@ -41,9 +41,7 @@ class FilterWrapper:
         return exams, wish_prof
 
     def __rank(self, df, wish_prof):
-        #print(self.profs)
         wished_profs = self.profs[self.profs['Профессия'] == wish_prof]
-        #print('Программная инженерия' in wished_profs['Конкурсн. группа'].values)
 
         df['wished'] = df['Конкурсн. группа'].apply(
             lambda x: (
