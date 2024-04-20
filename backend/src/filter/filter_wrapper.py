@@ -14,6 +14,9 @@ class FilterWrapper:
     def get_documents(self, abiture_data):
         exams, wish_prof = self.__parse_data(abiture_data)
 
+        if len(exams) < 3:
+            return {}
+
         filtered_df = self.df.copy()
         for subject, score in exams:
             filtered_df = (
