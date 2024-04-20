@@ -51,7 +51,73 @@
         </tr>
     </table>
 
-    
-    <input id="acception" type="button" value="Подобрать варианты">
+    <h2>Выберите желаемую профессию:</h2>
+    <div id="professions-container">
+
+    </div>
+
+    <input id="acception" type="button" value="Подобрать варианты" onclick="sendInfo()">
+
+    <script>
+        var professions = [
+            "lawyer",
+            "artist",
+            "chef",
+            "writer",
+            "musician",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect",
+            "architect"
+        ];
+
+        var professionsContainer = document.getElementById("professions-container");
+
+        professions.forEach(function(profession) {
+            var label = document.createElement("label");
+            var checkbox = document.createElement("input");
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.setAttribute("value", profession);
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(profession.charAt(0).toUpperCase() + profession.slice(1)));
+            label.appendChild(document.createElement("br"));
+            professionsContainer.appendChild(label);
+        });
+
+        function sendInfo(){
+            var subjects = {
+                "Математика": document.getElementById("math").value,
+                "Физика": document.getElementById("physics").value,
+                "Русский язык": document.getElementById("russian").value,
+                "Химия": document.getElementById("chemistry").value,
+                "Биология": document.getElementById("biology").value,
+                "Иностранный язык": document.getElementById("foreign").value,
+                "Информатика": document.getElementById("computer").value,
+                "География": document.getElementById("geography").value,
+                "Обществознание": document.getElementById("social").value
+            };
+
+            var selectedProfessions = [];
+            var checkboxes = document.querySelectorAll('#professions-container input[type="checkbox"]:checked');
+            checkboxes.forEach(function(checkbox) {
+                selectedProfessions.push(checkbox.value);
+            });
+
+            var data = {
+                "subjects": subjects,
+                "professions": selectedProfessions
+            };
+
+            var jsonData = JSON.stringify(data);
+            console.log(jsonData);  
+        }
+    </script>
 </body>
 </html>
