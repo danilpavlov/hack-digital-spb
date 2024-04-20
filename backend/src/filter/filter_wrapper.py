@@ -18,14 +18,16 @@ class FilterWrapper:
             return {}
 
         filtered_df = self.df.copy()
-        for subject, score in exams:
-            filtered_df = (
-                filtered_df[
-                    ((filtered_df['Мин. балл 1'] <= score) & (filtered_df['Предмет 1'] == subject)) |
-                    ((filtered_df['Мин. балл 2'] <= score) & (filtered_df['Предмет 2'] == subject)) |
-                    ((filtered_df['Мин. балл 3'] <= score) & (filtered_df['Предмет 3'] == subject))
-                ]
-            )
+
+        for i in range(1, 4):
+            subject_col = f'Предмет {i}'
+            score_col = f'Мин. балл {i}'
+
+            # Filter rows where the subject is in the exams keys
+            filtered_df = filtered_df[filtered_df[subject_col].isin(exams.keys())]
+
+            # Apply condition to drop rows where the score is greater than the corresponding score in exams
+            filtered_df = filtered_df[~(filtered_df[score_col] > filtered_df[subject_col].map(exams))]
 
         filtered_df = self.__rank(filtered_df, wish_prof)
 
@@ -34,11 +36,11 @@ class FilterWrapper:
         return json_response
 
     def __parse_data(self, abiture_data):
-        exams = [
-            (subject, score) for subject, score in zip(
+        exams = {
+            subject: score for subject, score in zip(
                 abiture_data['subjects'], abiture_data['scores']
             )
-        ]
+        }
 
         wish_prof = abiture_data['profession']
         return exams, wish_prof
