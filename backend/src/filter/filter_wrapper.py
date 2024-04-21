@@ -54,3 +54,4 @@ class FilterWrapper:
         )
 
         return df.sort_values(by=['wished'], ascending=False).copy()
+

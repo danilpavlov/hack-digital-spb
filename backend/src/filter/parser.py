@@ -24,11 +24,14 @@ def parse_etu():
         time.sleep(2)
 
         try:
-            profession_name = soup.find('div', class_='who-work__profession-name').text.strip()
-            program_name = soup.find('div', class_='direction-title').text.strip()
-            program_name = ' '.join(program_name.split(' ')[1:])  # Убираем дату в названии
+            profession_names = soup.find_all('div',
+                                             class_='who-work__profession-name')  # Находим все элементы с классом
+            for profession_name in profession_names:
+                profession_name_text = profession_name.text.strip()
+                program_name = soup.find('div', class_='direction-title').text.strip()
+                program_name = ' '.join(program_name.split(' ')[1:])  # Убираем дату в названии
+                profs.append((profession_name_text, program_name))
 
-            profs.append((profession_name, program_name))
         except:
             print('Failed parsing...')
 
@@ -38,3 +41,5 @@ def parse_etu():
         }
     )
     profs_df.to_csv('./backend/src/filter/data/prof.csv')
+
+parse_etu()
