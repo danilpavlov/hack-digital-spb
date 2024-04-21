@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <title>Подбор специальности</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
+
 <body>
     <h1> Введите ваши баллы ЕГЭ</h1>
 
@@ -49,6 +51,11 @@
             <td>Обществознание</td>
             <td><input id="social" type="number"></td>
         </tr>
+        <tr>
+            <td>Литература</td>
+            <td><input id="literature" type="number"></td>
+        </tr>
+        
     </table>
 
     <h2>Выберите желаемую профессию:</h2>
@@ -58,29 +65,44 @@
 
     <input id="acception" type="button" value="Подобрать варианты" onclick="sendInfo()">
 
+    <h2>Информация о направлениях:</h2>
+    <table id="directions-table">
+        <tr>
+            <th>Направление</th>
+            <th>Цена</th>
+            <th>Подходит</th>
+        </tr>
+    </table>
+
     <script>
-        var professions = [
-            "lawyer",
-            "artist",
-            "chef",
-            "writer",
-            "musician",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect",
-            "architect"
-        ];
+
+        var professions = [];
+        
+        fetch('http://localhost:5001/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                //console.log('Ответ от сервера:', data);
+                
+                Object.values(data).forEach(function (curr_object) {
+                    professions.push(curr_object);
+                });
+                console.log('Профессии:', professions);
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+
+
+    
 
         var professionsContainer = document.getElementById("professions-container");
-
-        professions.forEach(function(profession) {
+        setTimeout( () => {
+        professions.forEach(function (profession) {
             var label = document.createElement("label");
             var checkbox = document.createElement("input");
             checkbox.setAttribute("type", "checkbox");
@@ -89,35 +111,81 @@
             label.appendChild(document.createTextNode(profession.charAt(0).toUpperCase() + profession.slice(1)));
             label.appendChild(document.createElement("br"));
             professionsContainer.appendChild(label);
-        });
+        })
+    }, 100)
 
-        function sendInfo(){
+        function sendInfo() {
             var subjects = {
                 "Математика": document.getElementById("math").value,
                 "Физика": document.getElementById("physics").value,
                 "Русский язык": document.getElementById("russian").value,
                 "Химия": document.getElementById("chemistry").value,
                 "Биология": document.getElementById("biology").value,
-                "Иностранный язык": document.getElementById("foreign").value,
+                "Английский язык": document.getElementById("foreign").value,
                 "Информатика": document.getElementById("computer").value,
                 "География": document.getElementById("geography").value,
-                "Обществознание": document.getElementById("social").value
+                "Обществознание": document.getElementById("social").value,
+                "Литература": document.getElementById("literature").value,
             };
-
+            
             var selectedProfessions = [];
             var checkboxes = document.querySelectorAll('#professions-container input[type="checkbox"]:checked');
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 selectedProfessions.push(checkbox.value);
             });
 
+            var filteredSubjects = {};
+
+            for (var key in subjects) {
+                if (subjects[key].length !== 0) {
+                    filteredSubjects[key] = subjects[key];
+                }
+            }
+
+
+            var filteredKeys = [];
+            var filteredValues = [];
+            for (var key in filteredSubjects) {
+                filteredKeys.push(key);
+                filteredValues.push(filteredSubjects[key])
+            }
             var data = {
-                "subjects": subjects,
-                "professions": selectedProfessions
+                "subjects": filteredKeys,
+                "scores": filteredValues,
+                "profession": selectedProfessions
             };
 
             var jsonData = JSON.stringify(data);
-            console.log(jsonData);  
+
+            fetch('http://localhost:5001/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var directionsTable = document.getElementById("directions-table");
+                    while (directionsTable.rows.length > 1) {
+                        directionsTable.deleteRow(1);
+                    }
+
+                    for (var key in data) {
+                        var directionData = data[key];
+
+                        var row = directionsTable.insertRow();
+                        row.insertCell(0).innerHTML = directionData["Конкурсн. группа"];
+                        row.insertCell(1).innerHTML = directionData["Цена"];
+                        row.insertCell(2).innerHTML = directionData["wished"] ? "да" : "нет";
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+            console.log(jsonData);
         }
     </script>
 </body>
+
 </html>

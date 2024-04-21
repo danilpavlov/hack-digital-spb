@@ -15,7 +15,7 @@ class FilterWrapper:
         return json.loads(self.profs['Профессия'].to_json(orient='index', force_ascii=False))
 
     def get_documents(self, abiture_data):
-        abiture_data = json.load(abiture_data)
+        #abiture_data = json.load(abiture_data)
         exams, wish_prof = self.__parse_data(abiture_data)
 
         filtered_df = self.df.copy()
@@ -58,4 +58,3 @@ class FilterWrapper:
         )
 
         return df.sort_values(by=['wished'], ascending=False).copy()
-
