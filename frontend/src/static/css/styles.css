@@ -42,8 +42,8 @@ input[type="button"]:hover {
 }
 
 #professions-container {
-    width: 200px;
-    height: 150px;
+    width: 600px;
+    height: 250px;
     overflow-y: scroll;
     border: 1px solid #ccc;
     margin: 0 auto;
