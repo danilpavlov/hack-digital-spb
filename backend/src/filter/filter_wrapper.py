@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+from ml import *
 
 
 class FilterWrapper:
@@ -46,15 +47,12 @@ class FilterWrapper:
         wish_prof = abiture_data['profession']
         return exams, wish_prof
 
-    def __rank(self, df, wish_profs):
-        wished_profs = self.profs[self.profs['Профессия'].isin(wish_profs)]
-
-        df['wished'] = df['Конкурсн. группа'].apply(
-            lambda x: (
-                True
-                if x in wished_profs['Конкурсн. группа'].values else
-                False
-            )
+    def __rank(self, df, wish_prof):
+        ranks = pipe(wish_prof, top_k=30)
+        ranks_df = pd.DataFrame({
+            'Конкурсн. группа': [rank.get('label') for rank in ranks],
+            'Матчинг': [rank.get('score') for rank in ranks]
+            }
         )
 
-        return df.sort_values(by=['wished'], ascending=False).copy()
+        return ranks_df.merge(data=df, on='Конкурсн. группа', how='left')
